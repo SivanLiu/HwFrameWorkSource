@@ -1,0 +1,45 @@
+package huawei.android.security.facerecognition.request;
+
+import android.content.Context;
+import android.view.Surface;
+import huawei.android.security.facerecognition.FaceRecognizeManagerImpl;
+import huawei.android.security.facerecognition.FaceRecognizeManagerImpl.CallbackHolder;
+import huawei.android.security.facerecognition.base.HwSecurityTaskThread;
+import huawei.android.security.facerecognition.task.AuthenticateTask;
+import huawei.android.security.facerecognition.utils.LogUtil;
+import java.util.List;
+
+public class AuthenticateRequest extends FaceRecognizeRequest {
+    private Context mContext;
+    private int mFlags;
+    private List<Surface> mSurfaces;
+
+    public AuthenticateRequest(int reqId, FaceRecognizeManagerImpl mgr, int flags, List<Surface> surfaces, Context context) {
+        super(reqId, mgr);
+        this.mSurfaces = surfaces;
+        this.mFlags = flags;
+        this.mContext = context;
+    }
+
+    public int getType() {
+        return 1;
+    }
+
+    public boolean onReqStart() {
+        LogUtil.i("", "start auth request");
+        HwSecurityTaskThread.staticPushTask(new AuthenticateTask(null, this.mRetCallback, this, this.mContext), 0);
+        return true;
+    }
+
+    public List<Surface> getSurfaces() {
+        return this.mSurfaces;
+    }
+
+    public int getFlags() {
+        return this.mFlags;
+    }
+
+    public void sendCancelOK() {
+        CallbackHolder.getInstance().onCallbackEvent(getReqId(), 2, 2, 0);
+    }
+}

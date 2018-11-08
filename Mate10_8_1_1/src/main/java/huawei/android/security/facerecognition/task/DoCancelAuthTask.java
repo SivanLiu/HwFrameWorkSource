@@ -1,0 +1,81 @@
+package huawei.android.security.facerecognition.task;
+
+import huawei.android.security.facerecognition.FaceRecognizeEvent;
+import huawei.android.security.facerecognition.FaceRecognizeManagerImpl.CallbackHolder;
+import huawei.android.security.facerecognition.FaceRecognizeManagerImpl.ServiceHolder;
+import huawei.android.security.facerecognition.base.HwSecurityMsgCenter;
+import huawei.android.security.facerecognition.base.HwSecurityTaskBase;
+import huawei.android.security.facerecognition.base.HwSecurityTaskBase.EventListener;
+import huawei.android.security.facerecognition.base.HwSecurityTaskBase.RetCallback;
+import huawei.android.security.facerecognition.base.HwSecurityTaskBase.TimerOutProc;
+import huawei.android.security.facerecognition.base.HwSecurityTimerTask;
+import huawei.android.security.facerecognition.request.FaceRecognizeRequest;
+import huawei.android.security.facerecognition.utils.LogUtil;
+
+public class DoCancelAuthTask extends FaceRecognizeTask implements EventListener {
+    private static final long TIMEOUT = 3000;
+    private int mRetErrorCode;
+    private int mRetUserId;
+    TimerOutProc mTimeoutProc = new TimerOutProc() {
+        public void onTimerOut() {
+            DoCancelAuthTask.this.endWithResult(0);
+        }
+    };
+    private HwSecurityTimerTask mTimer = new HwSecurityTimerTask();
+
+    public DoCancelAuthTask(HwSecurityTaskBase parent, RetCallback callback, FaceRecognizeRequest request) {
+        super(parent, callback, request);
+        HwSecurityMsgCenter.staticRegisterEvent(10, this, this);
+        HwSecurityMsgCenter.staticRegisterEvent(11, this, this);
+        HwSecurityMsgCenter.staticRegisterEvent(12, this, this);
+    }
+
+    public int doAction() {
+        LogUtil.i("", "do cancel auth task");
+        if (ServiceHolder.getInstance().cancelAuthentication() != 0) {
+            return 0;
+        }
+        this.mTimer.setTimeout(TIMEOUT, this.mTimeoutProc);
+        return -1;
+    }
+
+    public void onStop() {
+        this.mTimer.cancel();
+        HwSecurityMsgCenter.staticUnregisterEvent(10, this);
+        HwSecurityMsgCenter.staticUnregisterEvent(11, this);
+        HwSecurityMsgCenter.staticUnregisterEvent(12, this);
+    }
+
+    public boolean onEvent(FaceRecognizeEvent ev) {
+        switch (ev.getType()) {
+            case 10:
+                this.mRetErrorCode = ev.getArgs()[0];
+                if (this.mRetErrorCode == 0) {
+                    this.mRetUserId = ev.getArgs()[1];
+                }
+                if (!this.mTaskRequest.isCameraCanceled()) {
+                    CallbackHolder.getInstance().onCallbackEvent(this.mTaskRequest.getReqId(), 2, 1, this.mRetErrorCode);
+                    break;
+                }
+                CallbackHolder.getInstance().onCallbackEvent(this.mTaskRequest.getReqId(), 2, 1, 1);
+                break;
+            case 11:
+                CallbackHolder.getInstance().onCallbackEvent(this.mTaskRequest.getReqId(), 2, 3, ev.getArgs()[0]);
+                break;
+            case 12:
+                endWithResult(0);
+                break;
+            default:
+                return false;
+        }
+        return true;
+    }
+
+    public int getErrorCode() {
+        return this.mRetErrorCode;
+    }
+
+    public int getUserId() {
+        return this.mRetUserId;
+    }
+}

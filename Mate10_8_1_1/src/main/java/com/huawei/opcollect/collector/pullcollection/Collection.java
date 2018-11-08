@@ -1,0 +1,167 @@
+package com.huawei.opcollect.collector.pullcollection;
+
+import android.content.Context;
+import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.SystemProperties;
+import android.telephony.SubscriptionManager;
+import android.telephony.TelephonyManager;
+import com.huawei.opcollect.utils.EventIdConstant;
+import com.huawei.opcollect.utils.OPCollectLog;
+import java.util.Locale;
+
+public final class Collection {
+    private static final int INVALID_SUBSCRIPTION_ID = -1;
+    private static final int SLOT_ONE = 0;
+    private static final int SLOT_TWO = 1;
+    private static final String TAG = "CollectionImp";
+    private static final String UNKNOWN = "unknown";
+
+    public String getLanguage() {
+        Locale locale = Locale.getDefault();
+        StringBuilder languageStr = new StringBuilder();
+        languageStr.append("{language:");
+        languageStr.append(locale.getLanguage());
+        languageStr.append(",country:");
+        languageStr.append(locale.getCountry());
+        languageStr.append("}");
+        return languageStr.toString();
+    }
+
+    public String getDefaultIMEI(Context context) {
+        if (context == null) {
+            OPCollectLog.e(TAG, "context is null.");
+            return EventIdConstant.PURPOSE_STR_BLANK;
+        }
+        TelephonyManager manager = (TelephonyManager) context.getSystemService("phone");
+        if (manager == null) {
+            OPCollectLog.e(TAG, "Get TelephonyManager failed.");
+            return EventIdConstant.PURPOSE_STR_BLANK;
+        }
+        String deviceID = manager.getDeviceId();
+        if (deviceID == null) {
+            deviceID = EventIdConstant.PURPOSE_STR_BLANK;
+        }
+        return deviceID;
+    }
+
+    public String getSecondaryIMEI(Context context) {
+        String defaultID = getDefaultIMEI(context);
+        String slot1ID = getIMEI(context, 0);
+        String slot2ID = getIMEI(context, 1);
+        if (defaultID.equals(slot1ID)) {
+            return slot2ID;
+        }
+        return slot1ID;
+    }
+
+    private String getIMEI(Context context, int deviceID) {
+        if (context == null) {
+            OPCollectLog.e(TAG, "context is null.");
+            return EventIdConstant.PURPOSE_STR_BLANK;
+        }
+        TelephonyManager manager = (TelephonyManager) context.getSystemService("phone");
+        if (manager != null) {
+            return manager.getDeviceId(deviceID);
+        }
+        OPCollectLog.e(TAG, "Get TelephonyManager failed.");
+        return EventIdConstant.PURPOSE_STR_BLANK;
+    }
+
+    public String getHardwareVersion() {
+        return SystemProperties.get("ro.hardware", UNKNOWN);
+    }
+
+    public String getSN() {
+        return Build.getSerial();
+    }
+
+    public int getOpta() {
+        return SystemProperties.getInt("ro.config.hw_opta", INVALID_SUBSCRIPTION_ID);
+    }
+
+    public int getOptb() {
+        return SystemProperties.getInt("ro.config.hw_optb", INVALID_SUBSCRIPTION_ID);
+    }
+
+    public String getDeviceName() {
+        return Build.MODEL;
+    }
+
+    public String getBuildNumber() {
+        return Build.DISPLAY;
+    }
+
+    public String getSubIMSI(Context context) {
+        if (context == null) {
+            OPCollectLog.e(TAG, "context is null.");
+            return EventIdConstant.PURPOSE_STR_BLANK;
+        }
+        TelephonyManager manager = (TelephonyManager) context.getSystemService("phone");
+        if (manager == null) {
+            OPCollectLog.e(TAG, "Get TelephonyManager failed.");
+            return EventIdConstant.PURPOSE_STR_BLANK;
+        }
+        String imsi = manager.getSubscriberId();
+        if (imsi == null || imsi.length() < 5) {
+            return EventIdConstant.PURPOSE_STR_BLANK;
+        }
+        return imsi.substring(0, 5);
+    }
+
+    public String getDefaultIMSI(Context context) {
+        if (context == null) {
+            OPCollectLog.e(TAG, "context is null.");
+            return EventIdConstant.PURPOSE_STR_BLANK;
+        }
+        TelephonyManager manager = (TelephonyManager) context.getSystemService("phone");
+        if (manager == null) {
+            OPCollectLog.e(TAG, "Get TelephonyManager failed.");
+            return EventIdConstant.PURPOSE_STR_BLANK;
+        }
+        String imsi = manager.getSubscriberId();
+        if (imsi != null) {
+            return imsi;
+        }
+        return EventIdConstant.PURPOSE_STR_BLANK;
+    }
+
+    public String getSecondaryIMSI(Context context) {
+        String defaultImsi = getDefaultIMSI(context);
+        String slot1Imsi = getIMSI(context, 0);
+        String slot2Imsi = getIMSI(context, 1);
+        if (defaultImsi.equals(slot1Imsi)) {
+            return slot2Imsi;
+        }
+        return slot1Imsi;
+    }
+
+    public String getDefaultDataSlotIMSI(Context context) {
+        int main_slot = INVALID_SUBSCRIPTION_ID;
+        if (VERSION.SDK_INT > 23) {
+            main_slot = SubscriptionManager.getDefaultDataSubscriptionId();
+        }
+        if (main_slot == INVALID_SUBSCRIPTION_ID) {
+            main_slot = 0;
+        }
+        OPCollectLog.r(TAG, "slot: " + main_slot);
+        return getIMSI(context, main_slot);
+    }
+
+    private String getIMSI(Context context, int slotId) {
+        if (context == null) {
+            OPCollectLog.e(TAG, "context is null.");
+            return EventIdConstant.PURPOSE_STR_BLANK;
+        }
+        TelephonyManager manager = (TelephonyManager) context.getSystemService("phone");
+        if (manager == null) {
+            OPCollectLog.e(TAG, "Get TelephonyManager failed.");
+            return EventIdConstant.PURPOSE_STR_BLANK;
+        }
+        String imsi = manager.getSubscriberId(slotId);
+        if (imsi == null) {
+            imsi = EventIdConstant.PURPOSE_STR_BLANK;
+        }
+        return imsi;
+    }
+}
