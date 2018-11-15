@@ -1,0 +1,77 @@
+package org.apache.http.impl.conn.tsccm;
+
+import java.util.Date;
+import java.util.concurrent.locks.Condition;
+
+@Deprecated
+public class WaitingThread {
+    private boolean aborted;
+    private final Condition cond;
+    private final RouteSpecificPool pool;
+    private Thread waiter;
+
+    public WaitingThread(Condition cond, RouteSpecificPool pool) {
+        if (cond != null) {
+            this.cond = cond;
+            this.pool = pool;
+            return;
+        }
+        throw new IllegalArgumentException("Condition must not be null.");
+    }
+
+    public final Condition getCondition() {
+        return this.cond;
+    }
+
+    public final RouteSpecificPool getPool() {
+        return this.pool;
+    }
+
+    public final Thread getThread() {
+        return this.waiter;
+    }
+
+    public boolean await(Date deadline) throws InterruptedException {
+        if (this.waiter != null) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("A thread is already waiting on this object.\ncaller: ");
+            stringBuilder.append(Thread.currentThread());
+            stringBuilder.append("\nwaiter: ");
+            stringBuilder.append(this.waiter);
+            throw new IllegalStateException(stringBuilder.toString());
+        } else if (this.aborted) {
+            throw new InterruptedException("Operation interrupted");
+        } else {
+            boolean success;
+            this.waiter = Thread.currentThread();
+            if (deadline != null) {
+                try {
+                    success = this.cond.awaitUntil(deadline);
+                } catch (Throwable th) {
+                    this.waiter = null;
+                }
+            } else {
+                this.cond.await();
+                success = true;
+            }
+            if (this.aborted) {
+                throw new InterruptedException("Operation interrupted");
+            }
+            this.waiter = null;
+            return success;
+        }
+    }
+
+    public void wakeup() {
+        if (this.waiter != null) {
+            this.cond.signalAll();
+            return;
+        }
+        throw new IllegalStateException("Nobody waiting on this object.");
+    }
+
+    public void interrupt() {
+        this.aborted = true;
+        this.cond.signalAll();
+    }
+}

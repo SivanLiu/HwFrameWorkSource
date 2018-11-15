@@ -1,0 +1,263 @@
+package com.android.server.wifi.hotspot2;
+
+import android.net.wifi.hotspot2.PasspointConfiguration;
+import android.text.TextUtils;
+import com.android.internal.util.XmlUtils;
+import com.android.server.wifi.SIMAccessor;
+import com.android.server.wifi.WifiConfigStore.StoreData;
+import com.android.server.wifi.WifiKeyStore;
+import com.android.server.wifi.util.XmlUtil;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlSerializer;
+
+public class PasspointConfigStoreData implements StoreData {
+    private static final String XML_TAG_CA_CERTIFICATE_ALIAS = "CaCertificateAlias";
+    private static final String XML_TAG_CLIENT_CERTIFICATE_ALIAS = "ClientCertificateAlias";
+    private static final String XML_TAG_CLIENT_PRIVATE_KEY_ALIAS = "ClientPrivateKeyAlias";
+    private static final String XML_TAG_CREATOR_UID = "CreatorUID";
+    private static final String XML_TAG_HAS_EVER_CONNECTED = "HasEverConnected";
+    private static final String XML_TAG_PROVIDER_ID = "ProviderID";
+    private static final String XML_TAG_PROVIDER_INDEX = "ProviderIndex";
+    private static final String XML_TAG_SECTION_HEADER_PASSPOINT_CONFIGURATION = "Configuration";
+    private static final String XML_TAG_SECTION_HEADER_PASSPOINT_CONFIG_DATA = "PasspointConfigData";
+    private static final String XML_TAG_SECTION_HEADER_PASSPOINT_PROVIDER = "Provider";
+    protected static final String XML_TAG_SECTION_HEADER_PASSPOINT_PROVIDER_LIST = "ProviderList";
+    private final DataSource mDataSource;
+    private final WifiKeyStore mKeyStore;
+    private final SIMAccessor mSimAccessor;
+
+    public interface DataSource {
+        long getProviderIndex();
+
+        List<PasspointProvider> getProviders();
+
+        void setProviderIndex(long j);
+
+        void setProviders(List<PasspointProvider> list);
+    }
+
+    PasspointConfigStoreData(WifiKeyStore keyStore, SIMAccessor simAccessor, DataSource dataSource) {
+        this.mKeyStore = keyStore;
+        this.mSimAccessor = simAccessor;
+        this.mDataSource = dataSource;
+    }
+
+    public void serializeData(XmlSerializer out, boolean shared) throws XmlPullParserException, IOException {
+        if (shared) {
+            serializeShareData(out);
+        } else {
+            serializeUserData(out);
+        }
+    }
+
+    public void deserializeData(XmlPullParser in, int outerTagDepth, boolean shared) throws XmlPullParserException, IOException {
+        if (in != null) {
+            if (shared) {
+                deserializeShareData(in, outerTagDepth);
+            } else {
+                deserializeUserData(in, outerTagDepth);
+            }
+        }
+    }
+
+    public void resetData(boolean shared) {
+        if (shared) {
+            resetShareData();
+        } else {
+            resetUserData();
+        }
+    }
+
+    public String getName() {
+        return XML_TAG_SECTION_HEADER_PASSPOINT_CONFIG_DATA;
+    }
+
+    public boolean supportShareData() {
+        return true;
+    }
+
+    private void serializeShareData(XmlSerializer out) throws XmlPullParserException, IOException {
+        XmlUtil.writeNextValue(out, XML_TAG_PROVIDER_INDEX, Long.valueOf(this.mDataSource.getProviderIndex()));
+    }
+
+    private void serializeUserData(XmlSerializer out) throws XmlPullParserException, IOException {
+        serializeProviderList(out, this.mDataSource.getProviders());
+    }
+
+    private void serializeProviderList(XmlSerializer out, List<PasspointProvider> providerList) throws XmlPullParserException, IOException {
+        if (providerList != null) {
+            XmlUtil.writeNextSectionStart(out, XML_TAG_SECTION_HEADER_PASSPOINT_PROVIDER_LIST);
+            for (PasspointProvider provider : providerList) {
+                serializeProvider(out, provider);
+            }
+            XmlUtil.writeNextSectionEnd(out, XML_TAG_SECTION_HEADER_PASSPOINT_PROVIDER_LIST);
+        }
+    }
+
+    private void serializeProvider(XmlSerializer out, PasspointProvider provider) throws XmlPullParserException, IOException {
+        XmlUtil.writeNextSectionStart(out, XML_TAG_SECTION_HEADER_PASSPOINT_PROVIDER);
+        XmlUtil.writeNextValue(out, XML_TAG_PROVIDER_ID, Long.valueOf(provider.getProviderId()));
+        XmlUtil.writeNextValue(out, XML_TAG_CREATOR_UID, Integer.valueOf(provider.getCreatorUid()));
+        XmlUtil.writeNextValue(out, XML_TAG_CA_CERTIFICATE_ALIAS, provider.getCaCertificateAlias());
+        XmlUtil.writeNextValue(out, XML_TAG_CLIENT_CERTIFICATE_ALIAS, provider.getClientCertificateAlias());
+        XmlUtil.writeNextValue(out, XML_TAG_CLIENT_PRIVATE_KEY_ALIAS, provider.getClientPrivateKeyAlias());
+        XmlUtil.writeNextValue(out, "HasEverConnected", Boolean.valueOf(provider.getHasEverConnected()));
+        if (provider.getConfig() != null) {
+            XmlUtil.writeNextSectionStart(out, XML_TAG_SECTION_HEADER_PASSPOINT_CONFIGURATION);
+            PasspointXmlUtils.serializePasspointConfiguration(out, provider.getConfig());
+            XmlUtil.writeNextSectionEnd(out, XML_TAG_SECTION_HEADER_PASSPOINT_CONFIGURATION);
+        }
+        XmlUtil.writeNextSectionEnd(out, XML_TAG_SECTION_HEADER_PASSPOINT_PROVIDER);
+    }
+
+    private void deserializeShareData(XmlPullParser in, int outerTagDepth) throws XmlPullParserException, IOException {
+        while (!XmlUtil.isNextSectionEnd(in, outerTagDepth)) {
+            String[] valueName = new String[1];
+            Object value = XmlUtil.readCurrentValue(in, valueName);
+            if (valueName[0] != null) {
+                String str = valueName[0];
+                int i = -1;
+                if (str.hashCode() == 682520897 && str.equals(XML_TAG_PROVIDER_INDEX)) {
+                    i = 0;
+                }
+                if (i == 0) {
+                    this.mDataSource.setProviderIndex(((Long) value).longValue());
+                } else {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Unknown value under share store data ");
+                    stringBuilder.append(valueName[0]);
+                    throw new XmlPullParserException(stringBuilder.toString());
+                }
+            }
+            throw new XmlPullParserException("Missing value name");
+        }
+    }
+
+    private void deserializeUserData(XmlPullParser in, int outerTagDepth) throws XmlPullParserException, IOException {
+        String[] headerName = new String[1];
+        while (XmlUtil.gotoNextSectionOrEnd(in, headerName, outerTagDepth)) {
+            String str = headerName[0];
+            int i = -1;
+            if (str.hashCode() == -254992817 && str.equals(XML_TAG_SECTION_HEADER_PASSPOINT_PROVIDER_LIST)) {
+                i = 0;
+            }
+            if (i == 0) {
+                this.mDataSource.setProviders(deserializeProviderList(in, outerTagDepth + 1));
+            } else {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Unknown Passpoint user store data ");
+                stringBuilder.append(headerName[0]);
+                throw new XmlPullParserException(stringBuilder.toString());
+            }
+        }
+    }
+
+    protected List<PasspointProvider> deserializeProviderList(XmlPullParser in, int outerTagDepth) throws XmlPullParserException, IOException {
+        List<PasspointProvider> providerList = new ArrayList();
+        while (XmlUtil.gotoNextSectionWithNameOrEnd(in, XML_TAG_SECTION_HEADER_PASSPOINT_PROVIDER, outerTagDepth)) {
+            providerList.add(deserializeProvider(in, outerTagDepth + 1));
+        }
+        return providerList;
+    }
+
+    /* JADX WARNING: Missing block: B:14:0x004f, code:
+            if (r14.equals(XML_TAG_CREATOR_UID) != false) goto L_0x0071;
+     */
+    /* Code decompiled incorrectly, please refer to instructions dump. */
+    private PasspointProvider deserializeProvider(XmlPullParser in, int outerTagDepth) throws XmlPullParserException, IOException {
+        XmlPullParser xmlPullParser = in;
+        String caCertificateAlias = null;
+        String clientCertificateAlias = null;
+        String clientPrivateKeyAlias = null;
+        boolean hasEverConnected = false;
+        int creatorUid = Integer.MIN_VALUE;
+        long providerId = Long.MIN_VALUE;
+        PasspointConfiguration config = null;
+        while (XmlUtils.nextElementWithin(in, outerTagDepth)) {
+            if (xmlPullParser.getAttributeValue(null, "name") != null) {
+                int i = 1;
+                String[] name = new String[1];
+                String value = XmlUtil.readCurrentValue(xmlPullParser, name);
+                String str = name[0];
+                switch (str.hashCode()) {
+                    case -2096352532:
+                        if (str.equals(XML_TAG_PROVIDER_ID)) {
+                            i = 0;
+                            break;
+                        }
+                    case -1882773911:
+                        if (str.equals(XML_TAG_CLIENT_PRIVATE_KEY_ALIAS)) {
+                            i = 4;
+                            break;
+                        }
+                    case -1529270479:
+                        if (str.equals("HasEverConnected")) {
+                            i = 5;
+                            break;
+                        }
+                    case -922180444:
+                        break;
+                    case -603932412:
+                        if (str.equals(XML_TAG_CLIENT_CERTIFICATE_ALIAS)) {
+                            i = 3;
+                            break;
+                        }
+                    case 801332119:
+                        if (str.equals(XML_TAG_CA_CERTIFICATE_ALIAS)) {
+                            i = 2;
+                            break;
+                        }
+                    default:
+                        i = -1;
+                        break;
+                }
+                switch (i) {
+                    case 0:
+                        providerId = ((Long) value).longValue();
+                        break;
+                    case 1:
+                        creatorUid = ((Integer) value).intValue();
+                        break;
+                    case 2:
+                        caCertificateAlias = value;
+                        break;
+                    case 3:
+                        clientCertificateAlias = value;
+                        break;
+                    case 4:
+                        clientPrivateKeyAlias = value;
+                        break;
+                    case 5:
+                        hasEverConnected = ((Boolean) value).booleanValue();
+                        break;
+                }
+            } else if (TextUtils.equals(in.getName(), XML_TAG_SECTION_HEADER_PASSPOINT_CONFIGURATION)) {
+                config = PasspointXmlUtils.deserializePasspointConfiguration(xmlPullParser, outerTagDepth + 1);
+            } else {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Unexpected section under Provider: ");
+                stringBuilder.append(in.getName());
+                throw new XmlPullParserException(stringBuilder.toString());
+            }
+        }
+        if (providerId == Long.MIN_VALUE) {
+            throw new XmlPullParserException("Missing provider ID");
+        } else if (config != null) {
+            return new PasspointProvider(config, this.mKeyStore, this.mSimAccessor, providerId, creatorUid, caCertificateAlias, clientCertificateAlias, clientPrivateKeyAlias, hasEverConnected, false);
+        } else {
+            throw new XmlPullParserException("Missing Passpoint configuration");
+        }
+    }
+
+    private void resetShareData() {
+        this.mDataSource.setProviderIndex(0);
+    }
+
+    private void resetUserData() {
+        this.mDataSource.setProviders(new ArrayList());
+    }
+}

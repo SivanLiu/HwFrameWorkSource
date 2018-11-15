@@ -1,0 +1,125 @@
+package com.android.server.pm;
+
+import android.content.IntentFilter;
+import com.android.internal.util.XmlUtils;
+import java.io.IOException;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlSerializer;
+
+class CrossProfileIntentFilter extends IntentFilter {
+    private static final String ATTR_FILTER = "filter";
+    private static final String ATTR_FLAGS = "flags";
+    private static final String ATTR_OWNER_PACKAGE = "ownerPackage";
+    private static final String ATTR_TARGET_USER_ID = "targetUserId";
+    private static final String TAG = "CrossProfileIntentFilter";
+    final int mFlags;
+    final String mOwnerPackage;
+    final int mTargetUserId;
+
+    CrossProfileIntentFilter(IntentFilter filter, String ownerPackage, int targetUserId, int flags) {
+        super(filter);
+        this.mTargetUserId = targetUserId;
+        this.mOwnerPackage = ownerPackage;
+        this.mFlags = flags;
+    }
+
+    public int getTargetUserId() {
+        return this.mTargetUserId;
+    }
+
+    public int getFlags() {
+        return this.mFlags;
+    }
+
+    public String getOwnerPackage() {
+        return this.mOwnerPackage;
+    }
+
+    CrossProfileIntentFilter(XmlPullParser parser) throws XmlPullParserException, IOException {
+        this.mTargetUserId = getIntFromXml(parser, ATTR_TARGET_USER_ID, -10000);
+        this.mOwnerPackage = getStringFromXml(parser, ATTR_OWNER_PACKAGE, BackupManagerConstants.DEFAULT_BACKUP_FINISHED_NOTIFICATION_RECEIVERS);
+        this.mFlags = getIntFromXml(parser, ATTR_FLAGS, 0);
+        int outerDepth = parser.getDepth();
+        String tagName = parser.getName();
+        while (true) {
+            int next = parser.next();
+            int type = next;
+            if (next == 1 || (type == 3 && parser.getDepth() <= outerDepth)) {
+                break;
+            }
+            tagName = parser.getName();
+            if (type != 3) {
+                if (type != 4) {
+                    if (type != 2) {
+                        continue;
+                    } else if (tagName.equals(ATTR_FILTER)) {
+                        break;
+                    } else {
+                        String msg = new StringBuilder();
+                        msg.append("Unknown element under crossProfile-intent-filters: ");
+                        msg.append(tagName);
+                        msg.append(" at ");
+                        msg.append(parser.getPositionDescription());
+                        PackageManagerService.reportSettingsProblem(5, msg.toString());
+                        XmlUtils.skipCurrentTag(parser);
+                    }
+                }
+            }
+        }
+        if (tagName.equals(ATTR_FILTER)) {
+            readFromXml(parser);
+            return;
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Missing element under CrossProfileIntentFilter: filter at ");
+        stringBuilder.append(parser.getPositionDescription());
+        PackageManagerService.reportSettingsProblem(5, stringBuilder.toString());
+        XmlUtils.skipCurrentTag(parser);
+    }
+
+    String getStringFromXml(XmlPullParser parser, String attribute, String defaultValue) {
+        String value = parser.getAttributeValue(null, attribute);
+        if (value != null) {
+            return value;
+        }
+        String msg = new StringBuilder();
+        msg.append("Missing element under CrossProfileIntentFilter: ");
+        msg.append(attribute);
+        msg.append(" at ");
+        msg.append(parser.getPositionDescription());
+        PackageManagerService.reportSettingsProblem(5, msg.toString());
+        return defaultValue;
+    }
+
+    int getIntFromXml(XmlPullParser parser, String attribute, int defaultValue) {
+        String stringValue = getStringFromXml(parser, attribute, null);
+        if (stringValue != null) {
+            return Integer.parseInt(stringValue);
+        }
+        return defaultValue;
+    }
+
+    public void writeToXml(XmlSerializer serializer) throws IOException {
+        serializer.attribute(null, ATTR_TARGET_USER_ID, Integer.toString(this.mTargetUserId));
+        serializer.attribute(null, ATTR_FLAGS, Integer.toString(this.mFlags));
+        serializer.attribute(null, ATTR_OWNER_PACKAGE, this.mOwnerPackage);
+        serializer.startTag(null, ATTR_FILTER);
+        super.writeToXml(serializer);
+        serializer.endTag(null, ATTR_FILTER);
+    }
+
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("CrossProfileIntentFilter{0x");
+        stringBuilder.append(Integer.toHexString(System.identityHashCode(this)));
+        stringBuilder.append(" ");
+        stringBuilder.append(Integer.toString(this.mTargetUserId));
+        stringBuilder.append("}");
+        return stringBuilder.toString();
+    }
+
+    boolean equalsIgnoreFilter(CrossProfileIntentFilter other) {
+        return this.mTargetUserId == other.mTargetUserId && this.mOwnerPackage.equals(other.mOwnerPackage) && this.mFlags == other.mFlags;
+    }
+}

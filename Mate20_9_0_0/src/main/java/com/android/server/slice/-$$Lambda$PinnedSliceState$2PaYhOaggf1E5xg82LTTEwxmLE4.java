@@ -1,0 +1,16 @@
+package com.android.server.slice;
+
+import android.app.slice.SliceSpec;
+import java.util.function.Predicate;
+
+/* compiled from: lambda */
+public final /* synthetic */ class -$$Lambda$PinnedSliceState$2PaYhOaggf1E5xg82LTTEwxmLE4 implements Predicate {
+    public static final /* synthetic */ -$$Lambda$PinnedSliceState$2PaYhOaggf1E5xg82LTTEwxmLE4 INSTANCE = new -$$Lambda$PinnedSliceState$2PaYhOaggf1E5xg82LTTEwxmLE4();
+
+    private /* synthetic */ -$$Lambda$PinnedSliceState$2PaYhOaggf1E5xg82LTTEwxmLE4() {
+    }
+
+    public final boolean test(Object obj) {
+        return PinnedSliceState.lambda$mergeSpecs$1((SliceSpec) obj);
+    }
+}

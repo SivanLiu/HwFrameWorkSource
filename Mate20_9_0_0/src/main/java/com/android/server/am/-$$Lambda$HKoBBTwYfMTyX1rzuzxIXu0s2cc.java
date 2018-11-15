@@ -1,0 +1,15 @@
+package com.android.server.am;
+
+import java.util.function.Function;
+
+/* compiled from: lambda */
+public final /* synthetic */ class -$$Lambda$HKoBBTwYfMTyX1rzuzxIXu0s2cc implements Function {
+    public static final /* synthetic */ -$$Lambda$HKoBBTwYfMTyX1rzuzxIXu0s2cc INSTANCE = new -$$Lambda$HKoBBTwYfMTyX1rzuzxIXu0s2cc();
+
+    private /* synthetic */ -$$Lambda$HKoBBTwYfMTyX1rzuzxIXu0s2cc() {
+    }
+
+    public final Object apply(Object obj) {
+        return ((ContentProviderRecord) obj).getComponentName();
+    }
+}
