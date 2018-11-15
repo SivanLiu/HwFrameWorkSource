@@ -1,8 +1,9 @@
 # HwFrameWorkSource
 ## 本项目为华为 framework 源码合集：
-    - Mate10 EMUI 5.1 8.1.0
-    - P9 EMUI 5.0 8.0.0
-    - Mate20 EMUI 9.0.0 9.0.0
+    
+    Mate10 EMUI 5.1 8.1.0
+    P9 EMUI 5.0 8.0.0
+    Mate20 EMUI 9.0.0 9.0.0
 
 ## framework 提取步骤：
 
@@ -15,7 +16,7 @@
 * 2. 利用 [vdexExtractor](https://github.com/anestisb/vdexExtractor)工具将 *.vdex 转化为 dex 文件
 
 ```bash
-vdexExtractor -i input_file -o . output_file
+    vdexExtractor -i input_file -o . output_file
 ```
 
 * 3. 利用 [jadx](https://github.com/skylot/jadx)将转化后的 dex 文件转化为 java 源码;
