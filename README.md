@@ -11,13 +11,13 @@
     adb pull /system/framework .
 ```
 
-* 2. 利用 vdexExtractor[!https://github.com/anestisb/vdexExtractor] 工具将 *.vdex 转化为 dex 文件
+* 2. 利用 [vdexExtractor](https://github.com/anestisb/vdexExtractor)工具将 *.vdex 转化为 dex 文件
 
 ```bash
 vdexExtractor -i input_file -o . output_file
 ```
 
-* 3. 利用 jadx[!https://github.com/skylot/jadx] 将转化后的 dex 文件转化为 java 源码;
+* 3. 利用 [jadx](https://github.com/skylot/jadx)将转化后的 dex 文件转化为 java 源码;
 
 * 4. 编写脚本 convert.sh：
 
@@ -45,11 +45,6 @@ vdexExtractor -i input_file -o . output_file
 ```
 * 5. Android 9.0 dex2oat 生成的衍生文件（odex、vdex 和 cdex）, 其中 cdex 需要用到 compact_dex_converter[!https://github.com/anestisb/vdexExtractor/blob/master/tools/deodex/run.sh] 脚本下载 compact_dex_converter 工具转化为标准的 dex，再用 最新的 jadx 转化成 java 源码  
 
-* 6. 将脚本放到 framework 目录下执行即可
+* 6. 将脚本放到 framework 目录下修改权限，执行即可
 
-```bash
-    chmod a+x convert.sh
-    ./convert.sh
-```
-
-参考链接[!https://github.com/dstmath/HWFramework]
+参考链接：<https://github.com/dstmath/HWFramework>
