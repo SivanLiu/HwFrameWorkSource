@@ -44,7 +44,7 @@ vdexExtractor -i input_file -o . output_file
         jadx -d code --show-bad-code $file
     done
 ```
-* 5. Android 9.0 dex2oat 生成的衍生文件（odex、vdex 和 cdex）, 其中 cdex 需要用到 compact_dex_converter[!https://github.com/anestisb/vdexExtractor/blob/master/tools/deodex/run.sh] 脚本下载 compact_dex_converter 工具转化为标准的 dex，再用 最新的 jadx 转化成 java 源码  
+* 5. Android 9.0 dex2oat 生成的衍生文件（odex、vdex 和 cdex）, 其中 cdex 需要用到 [compact_dex_converter](https://github.com/anestisb/vdexExtractor/blob/master/tools/deodex/run.sh) 脚本下载 compact_dex_converter 工具转化为标准的 dex，再用 最新的 jadx 转化成 java 源码  
 
 * 6. 将脚本放到 framework 目录下修改权限，执行即可
 
