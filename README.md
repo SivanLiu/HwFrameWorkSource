@@ -36,7 +36,8 @@
     echo "==========从oat或odex中提取dex================="
     for file in $files
     do
-        vdexExtractor -i "$prefix/$file" -o .
+        # vdexExtractor -i "$prefix/$file" -o .
+        run.sh -i "$prefix/$file" -o .
     done
     echo "===========dex转java=============="
     files=`find . -name "*.dex"`
@@ -46,6 +47,11 @@
     done
 ```
 * 5. Android 9.0 dex2oat 生成的衍生文件（odex、vdex 和 cdex）, 其中 cdex 需要用到 [compact_dex_converter](https://github.com/anestisb/vdexExtractor/blob/master/tools/deodex/run.sh) 脚本下载 compact_dex_converter 工具转化为标准的 dex，再用 最新的 jadx 转化成 java 源码  
+run.sh 会去下载 compact_dex_converter，速度太慢，自己可以先根据 constants.sh 中的网址下载解压后放到对应的目录：
+[linux](https://onedrive.live.com/download?cid=D1FAC8CC6BE2C2B0&resid=D1FAC8CC6BE2C2B0%21581&authkey=AE_kzPqzG_-R4T0)
+路径: vdexExtractor/tools/deodex/hostTools/Linux/api-API_28
+[mac](https://onedrive.live.com/download?cid=D1FAC8CC6BE2C2B0&resid=D1FAC8CC6BE2C2B0%21580&authkey=ADMmFqIo6bj7X5Y)
+然后把 deps_prepare_env "$apiLevel" 一行注释掉就会使用本地已经下载好的依赖
 
 * 6. 将脚本放到 framework 目录下修改权限，执行即可
 
